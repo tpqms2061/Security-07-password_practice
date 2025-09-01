@@ -30,12 +30,12 @@ public class UserService {
     /**
      * 회원가입 - 패스워드 해싱 적용
      */
-    public User register(String username, String rawPassword, String email) {
-        if (userRepository.exitByUsername(username)) {
+    public User registerUser(String username, String rawPassword, String email) {
+        if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("이미 존재하는 사용자 명입니다.:" + username);
         }
 
-        if (userRepository.exitByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 등록된 이메일입니다: " + email);
         }
 

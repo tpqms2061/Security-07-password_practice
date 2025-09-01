@@ -8,16 +8,16 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true , nullable = false )
-    @NotBlank(message = "사용자명은 필수입니다.")
-    @Size(min = 3, max = 20, message = "사용자명은 3~20자 여야 합니다.")
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "사용자명은 필수입니다")
+    @Size(min = 3, max = 20, message = "사용자명은 3-20자여야 합니다")
     private String username;
 
     @Column(nullable = false)
@@ -25,13 +25,11 @@ public class User {
     private String password; // 해시된 패스워드가 저장됨
 
     @Column(unique = true, nullable = false)
-    @Email(message = "올바른 이메일형식이여야합니다.")
+    @Email(message = "올바른 이메일 형식이어야 합니다")
     private String email;
 
-    //활성화 여부 .
     @Column(nullable = false)
     private Boolean enabled = true;
-
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -39,49 +37,50 @@ public class User {
     @Column(name = "password_changed_at")
     private LocalDateTime passwordChangedAt;
 
-    //기본 생성자
+    // 기본 생성자
     protected User() {}
 
-    //생성자
-    public User( String email, String password,  String username) {
-        this.email = email;
-        this.password = password;
+    // 생성자
+    public User(String username, String password, String email) {
         this.username = username;
+        this.password = password;
+        this.email = email;
         this.createdAt = LocalDateTime.now();
         this.passwordChangedAt = LocalDateTime.now();
     }
 
-//getter
-    public LocalDateTime getCreatedAt() {return createdAt; }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (passwordChangedAt == null) {
+            passwordChangedAt = LocalDateTime.now();
+        }
+    }
 
-    public String getEmail() {return email;}
+    // Getter, Setter
+    public Long getId() { return id; }
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getEmail() { return email; }
+    public Boolean getEnabled() { return enabled; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getPasswordChangedAt() { return passwordChangedAt; }
 
-    public Boolean getEnabled() {return enabled;}
+    public void setUsername(String username) { this.username = username; }
 
-    public Long getId() {return id;}
-
-    public String getPassword() {return password;}
-
-    public LocalDateTime getPasswordChangedAt() {return passwordChangedAt;}
-
-    public String getUsername() {return username;}
-
-    //setter
+    // 패스워드 설정 시 변경 시간 업데이트
     public void setPassword(String password) {
         this.password = password;
         this.passwordChangedAt = LocalDateTime.now();
     }
 
-    public void setUsername(String username) {this.username = username;}
-
-    public void setEmail(String email) {this.email = email;}
-
-    public void setEnabled(Boolean enabled) {this.enabled = enabled;}
+    public void setEmail(String email) { this.email = email; }
+    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
 
     @Override
     public String toString() {
         return "User{" +
-                ", id=" + id +
+                "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", enabled=" + enabled +
@@ -89,4 +88,3 @@ public class User {
                 '}';
     }
 }
-
